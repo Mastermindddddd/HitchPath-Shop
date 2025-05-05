@@ -12,7 +12,8 @@ import {
   FaUser,
   FaThLarge,
 } from "react-icons/fa";
-import { AuthContext } from "../AuthContext"; // Import AuthContext
+import { AuthContext } from "../AuthContext";
+import { Bot } from "lucide-react"
 
 const Header = () => {
   const pathname = useLocation();
@@ -124,6 +125,15 @@ const Header = () => {
           </button>
         </div>
       </div>
+      <div className="bg-gradient-to-r from-slate-900 to-purple-900 text-white py-3 px-4">
+          <div className="container mx-auto text-center text-sm">
+            <p>
+              <Bot className="inline-block h-4 w-4 mr-1" />
+              Our AI-powered platform curates the best products from trusted partners. We may earn a commission on
+              purchases made through our referral links.
+            </p>
+          </div>
+        </div>
 
       {/* Sidebar */}
       {openNavigation && (

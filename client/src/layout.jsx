@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import WelcomeMessage from "./components/WelcomeMessage"; // Import the new component
-import Collaboration from "./components/Collaboration";
-import Benefits from "./components/Benefits";
-import CTA from "./components/CTA";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
 import Hero from "./components/Hero";
@@ -38,10 +35,10 @@ const Layout = () => {
       {isRootRoute && (
         <>
           <Hero />
-          <Benefits />
+          {/*<Benefits />
           <Collaboration />
           <CTA />
-          <CareerInvestmentShop />
+          <CareerInvestmentShop />*/}
           <Services />
           <Footer />
         </>
