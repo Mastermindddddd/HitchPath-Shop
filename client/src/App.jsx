@@ -9,6 +9,7 @@ import { initializeGA, logPageView } from "./googleAnalytics";
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import LearnCertify from "./pages/learnCertify";
 import ProductPage from "./pages/product";
+import AdminCourseManager from "./pages/AdminCourseManager";
 
 const App = () => {
   useEffect(() => {
@@ -27,6 +28,7 @@ const App = () => {
             {/*<Route path="/dashboard" element={<DashboardPage />} />*/}
             <Route path="/learn-and-certify" element={<LearnCertify />} />
             <Route path="/product" element={<ProductPage />} />
+            <Route path="/Course-Admin" element={<AdminCourseManager />} />
           </Route>
         </Routes>
       <ButtonGradient />

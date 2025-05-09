@@ -65,9 +65,11 @@ const Hero = () => {
                   </p>
                 </CardContent>
                 <CardFooter className="flex justify-center">
-                  <Button variant="ghost" className="text-blue-600 hover:text-blue-700 hover:bg-blue-50">
-                    Browse Courses <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
+                  <Link to="/learn-and-certify">
+                    <Button variant="ghost" className="text-blue-600 hover:text-blue-700 hover:bg-blue-50">
+                      Browse Courses <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </Link>
                 </CardFooter>
               </Card>
 
