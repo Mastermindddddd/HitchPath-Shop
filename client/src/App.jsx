@@ -11,7 +11,7 @@ import LearnCertify from "./pages/learnCertify";
 import ProductPage from "./pages/product";
 import AdminCourseManager from "./pages/AdminCourseManager";
 
-const App = () => {
+const App = () => {  
   useEffect(() => {
     initializeGA();
     logPageView(); 

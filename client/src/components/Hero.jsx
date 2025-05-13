@@ -49,7 +49,8 @@ const Hero = () => {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="flex justify-center">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">             
               {/* Category 1 */}
               <Card className="hover:shadow-lg transition-shadow border-t-4 border-t-blue-500">
                 <CardHeader className="text-center">
@@ -74,7 +75,7 @@ const Hero = () => {
               </Card>
 
               {/* Category 2 */}
-              <Card className="hover:shadow-lg transition-shadow border-t-4 border-t-purple-500">
+              {/*<Card className="hover:shadow-lg transition-shadow border-t-4 border-t-purple-500">
                 <CardHeader className="text-center">
                   <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Briefcase className="h-8 w-8 text-purple-600" />
@@ -92,7 +93,7 @@ const Hero = () => {
                     Explore Tools <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </CardFooter>
-              </Card>
+              </Card>*/}
 
               {/* Category 3 */}
               <Card className="hover:shadow-lg transition-shadow border-t-4 border-t-blue-500">
@@ -116,7 +117,7 @@ const Hero = () => {
               </Card>
 
               {/* Category 4 */}
-              <Card className="hover:shadow-lg transition-shadow border-t-4 border-t-purple-500">
+              {/*<Card className="hover:shadow-lg transition-shadow border-t-4 border-t-purple-500">
                 <CardHeader className="text-center">
                   <div className="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Heart className="h-8 w-8 text-teal-600" />
@@ -134,7 +135,8 @@ const Hero = () => {
                     Discover Wellness <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </CardFooter>
-              </Card>
+              </Card>*/}
+            </div>
             </div>
           </div>
         </section>

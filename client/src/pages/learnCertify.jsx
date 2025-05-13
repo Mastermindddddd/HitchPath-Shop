@@ -1,4 +1,6 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
@@ -9,79 +11,153 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../components/ui/accordion";
 
 export default function LearnCertify() {
-  // This is a template - you would replace this with actual data from your backend
-  const categoryName = "Learn & Certify"
-  const categoryDescription = "Enhance your skills with industry-recognized certifications and courses."
+  const [courses, setCourses] = useState([]);
+  const [filteredCourses, setFilteredCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [sortBy, setSortBy] = useState("featured");
+  const [priceRange, setPriceRange] = useState([0, 1000]);
+  const [selectedRatings, setSelectedRatings] = useState([]);
+  const [selectedTypes, setSelectedTypes] = useState([]);
+  const [selectedLevels, setSelectedLevels] = useState([]);
+  
+  const categoryName = "Learn & Certify";
+  const categoryDescription = "Enhance your skills with industry-recognized certifications and courses.";
+  
+  // API URL and config should come from your environment or configuration
+  const apiUrl = import.meta.env.VITE_API_URL;
+  const token = localStorage.getItem("token");
 
-  // Sample products - replace with actual data
-  const products = [
-    {
-      id: 1,
-      name: "Full-Stack Web Development Certification",
-      description: "Comprehensive course with real-world projects",
-      price: 199.99,
-      originalPrice: 299.99,
-      rating: 5,
-      badge: "New",
-      category: "Learn & Certify",
-      image: "/placeholder.svg?height=400&width=600",
-    },
-    {
-      id: 2,
-      name: "Data Science Bootcamp",
-      description: "Master data analysis, visualization, and machine learning",
-      price: 249.99,
-      originalPrice: 349.99,
-      rating: 4.5,
-      badge: "Bestseller",
-      category: "Learn & Certify",
-      image: "/placeholder.svg?height=400&width=600",
-    },
-    {
-      id: 3,
-      name: "UX/UI Design Fundamentals",
-      description: "Learn to create beautiful, user-friendly interfaces",
-      price: 149.99,
-      originalPrice: 199.99,
-      rating: 4.8,
-      badge: "",
-      category: "Learn & Certify",
-      image: "/placeholder.svg?height=400&width=600",
-    },
-    {
-      id: 4,
-      name: "Project Management Professional (PMP) Prep",
-      description: "Complete preparation for the PMP certification exam",
-      price: 179.99,
-      originalPrice: 249.99,
-      rating: 4.7,
-      badge: "Popular",
-      category: "Learn & Certify",
-      image: "/placeholder.svg?height=400&width=600",
-    },
-    {
-      id: 5,
-      name: "Digital Marketing Masterclass",
-      description: "Comprehensive training in all aspects of digital marketing",
-      price: 159.99,
-      originalPrice: 229.99,
-      rating: 4.6,
-      badge: "",
-      category: "Learn & Certify",
-      image: "/placeholder.svg?height=400&width=600",
-    },
-    {
-      id: 6,
-      name: "Cybersecurity Fundamentals",
-      description: "Essential skills for protecting digital assets",
-      price: 189.99,
-      originalPrice: 269.99,
-      rating: 4.9,
-      badge: "Hot",
-      category: "Learn & Certify",
-      image: "/placeholder.svg?height=400&width=600",
-    },
-  ]
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+      // Add any auth tokens if needed
+    }
+  };
+
+  // Fetch courses from the API
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        setLoading(true);
+        const res = await axios.get(`${apiUrl}/api/admin/courses`, config);
+        const data = res.data;
+        if (Array.isArray(data)) {
+          setCourses(data);
+          setFilteredCourses(data);
+        } else {
+          console.error("Expected array but got:", data);
+          setCourses([]);
+          setFilteredCourses([]);
+        }
+      } catch (err) {
+        console.error("Failed to fetch courses:", err.response?.data || err.message);
+        setError("Failed to load courses. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCourses();
+  }, [apiUrl]);
+
+  // Apply filters and sorting
+  useEffect(() => {
+    if (courses.length === 0) return;
+    
+    let result = [...courses];
+    
+    // Apply price filter
+    result = result.filter(
+      course => {
+        const price = parseFloat(course.price) || 0;
+        return price >= priceRange[0] && price <= priceRange[1];
+      }
+    );
+    
+    // Apply rating filter
+    if (selectedRatings.length > 0) {
+      result = result.filter(course => {
+        const rating = parseFloat(course.rating) || 0;
+        return selectedRatings.some(r => rating >= r);
+      });
+    }
+    
+    // Apply type filter
+    if (selectedTypes.length > 0) {
+      result = result.filter(course => 
+        selectedTypes.includes(course.type)
+      );
+    }
+    
+    // Apply level filter
+    if (selectedLevels.length > 0) {
+      result = result.filter(course => 
+        selectedLevels.includes(course.level)
+      );
+    }
+    
+    // Apply sorting
+    switch (sortBy) {
+      case "price-low":
+        result.sort((a, b) => (parseFloat(a.price) || 0) - (parseFloat(b.price) || 0));
+        break;
+      case "price-high":
+        result.sort((a, b) => (parseFloat(b.price) || 0) - (parseFloat(a.price) || 0));
+        break;
+      case "rating":
+        result.sort((a, b) => (parseFloat(b.rating) || 0) - (parseFloat(a.rating) || 0));
+        break;
+      case "newest":
+        result.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+        break;
+      case "featured":
+      default:
+        // Sort by rating as a default "featured" implementation
+        result.sort((a, b) => (parseFloat(b.rating) || 0) - (parseFloat(a.rating) || 0));
+        break;
+    }
+    
+    setFilteredCourses(result);
+  }, [courses, sortBy, priceRange, selectedRatings, selectedTypes, selectedLevels]);
+
+  const handlePriceRangeChange = (values) => {
+    setPriceRange(values);
+  };
+
+  const handleRatingChange = (rating, isChecked) => {
+    if (isChecked) {
+      setSelectedRatings([...selectedRatings, rating]);
+    } else {
+      setSelectedRatings(selectedRatings.filter(r => r !== rating));
+    }
+  };
+
+  const handleTypeChange = (type, isChecked) => {
+    if (isChecked) {
+      setSelectedTypes([...selectedTypes, type]);
+    } else {
+      setSelectedTypes(selectedTypes.filter(t => t !== type));
+    }
+  };
+
+  const handleLevelChange = (level, isChecked) => {
+    if (isChecked) {
+      setSelectedLevels([...selectedLevels, level]);
+    } else {
+      setSelectedLevels(selectedLevels.filter(l => l !== level));
+    }
+  };
+
+  const resetFilters = () => {
+    setPriceRange([0, 1000]);
+    setSelectedRatings([]);
+    setSelectedTypes([]);
+    setSelectedLevels([]);
+    setSortBy("featured");
+    // Reset to all courses
+    setFilteredCourses(courses);
+  };
 
   return (
     <div className="flex flex-col min-h-screen mt-5">
@@ -92,7 +168,7 @@ export default function LearnCertify() {
             <span className="font-bold text-xl">hitchpath-Shop</span>
           </Link>
           <nav className="hidden md:flex items-center space-x-6">
-            <Link to="/learn-certify" className="text-sm font-medium hover:text-primary">
+            <Link to="/learn-and-certify" className="text-sm font-medium hover:text-primary">
               Learn & Certify
             </Link>
             <Link to="/career-toolkit" className="text-sm font-medium hover:text-primary">
@@ -142,7 +218,7 @@ export default function LearnCertify() {
                   <h2 className="font-semibold text-lg flex items-center">
                     <Filter className="h-4 w-4 mr-2" /> Filters
                   </h2>
-                  <Button variant="ghost" size="sm" className="text-xs">
+                  <Button variant="ghost" size="sm" className="text-xs" onClick={resetFilters}>
                     Reset
                   </Button>
                 </div>
@@ -152,10 +228,15 @@ export default function LearnCertify() {
                     <AccordionTrigger className="text-sm font-medium">Price Range</AccordionTrigger>
                     <AccordionContent>
                       <div className="space-y-4">
-                        <Slider defaultValue={[0, 500]} max={1000} step={10} />
+                        <Slider 
+                          value={priceRange} 
+                          max={1000} 
+                          step={10} 
+                          onValueChange={handlePriceRangeChange}
+                        />
                         <div className="flex items-center justify-between">
-                          <span className="text-sm">$0</span>
-                          <span className="text-sm">$1000</span>
+                          <span className="text-sm">${priceRange[0]}</span>
+                          <span className="text-sm">${priceRange[1]}</span>
                         </div>
                       </div>
                     </AccordionContent>
@@ -167,7 +248,11 @@ export default function LearnCertify() {
                       <div className="space-y-2">
                         {[5, 4, 3, 2, 1].map((rating) => (
                           <div key={rating} className="flex items-center">
-                            <Checkbox id={`rating-${rating}`} />
+                            <Checkbox 
+                              id={`rating-${rating}`} 
+                              checked={selectedRatings.includes(rating)}
+                              onCheckedChange={(checked) => handleRatingChange(rating, checked)}
+                            />
                             <label htmlFor={`rating-${rating}`} className="ml-2 text-sm flex items-center">
                               {Array.from({ length: rating }).map((_, i) => (
                                 <Star key={i} className="h-4 w-4 text-yellow-400 fill-yellow-400" />
@@ -188,25 +273,41 @@ export default function LearnCertify() {
                     <AccordionContent>
                       <div className="space-y-2">
                         <div className="flex items-center">
-                          <Checkbox id="type-course" />
+                          <Checkbox 
+                            id="type-course" 
+                            checked={selectedTypes.includes("course")}
+                            onCheckedChange={(checked) => handleTypeChange("course", checked)}
+                          />
                           <label htmlFor="type-course" className="ml-2 text-sm">
                             Courses
                           </label>
                         </div>
                         <div className="flex items-center">
-                          <Checkbox id="type-certification" />
+                          <Checkbox 
+                            id="type-certification" 
+                            checked={selectedTypes.includes("certification")}
+                            onCheckedChange={(checked) => handleTypeChange("certification", checked)}
+                          />
                           <label htmlFor="type-certification" className="ml-2 text-sm">
                             Certifications
                           </label>
                         </div>
                         <div className="flex items-center">
-                          <Checkbox id="type-bootcamp" />
+                          <Checkbox 
+                            id="type-bootcamp" 
+                            checked={selectedTypes.includes("bootcamp")}
+                            onCheckedChange={(checked) => handleTypeChange("bootcamp", checked)}
+                          />
                           <label htmlFor="type-bootcamp" className="ml-2 text-sm">
                             Bootcamps
                           </label>
                         </div>
                         <div className="flex items-center">
-                          <Checkbox id="type-workshop" />
+                          <Checkbox 
+                            id="type-workshop" 
+                            checked={selectedTypes.includes("workshop")}
+                            onCheckedChange={(checked) => handleTypeChange("workshop", checked)}
+                          />
                           <label htmlFor="type-workshop" className="ml-2 text-sm">
                             Workshops
                           </label>
@@ -220,19 +321,31 @@ export default function LearnCertify() {
                     <AccordionContent>
                       <div className="space-y-2">
                         <div className="flex items-center">
-                          <Checkbox id="level-beginner" />
+                          <Checkbox 
+                            id="level-beginner" 
+                            checked={selectedLevels.includes("beginner")}
+                            onCheckedChange={(checked) => handleLevelChange("beginner", checked)}
+                          />
                           <label htmlFor="level-beginner" className="ml-2 text-sm">
                             Beginner
                           </label>
                         </div>
                         <div className="flex items-center">
-                          <Checkbox id="level-intermediate" />
+                          <Checkbox 
+                            id="level-intermediate" 
+                            checked={selectedLevels.includes("intermediate")}
+                            onCheckedChange={(checked) => handleLevelChange("intermediate", checked)}
+                          />
                           <label htmlFor="level-intermediate" className="ml-2 text-sm">
                             Intermediate
                           </label>
                         </div>
                         <div className="flex items-center">
-                          <Checkbox id="level-advanced" />
+                          <Checkbox 
+                            id="level-advanced" 
+                            checked={selectedLevels.includes("advanced")}
+                            onCheckedChange={(checked) => handleLevelChange("advanced", checked)}
+                          />
                           <label htmlFor="level-advanced" className="ml-2 text-sm">
                             Advanced
                           </label>
@@ -249,10 +362,12 @@ export default function LearnCertify() {
             {/* Products Grid */}
             <div className="flex-1">
               <div className="flex items-center justify-between mb-6">
-                <p className="text-sm text-slate-600">Showing {products.length} results</p>
+                <p className="text-sm text-slate-600">
+                  {loading ? "Loading courses..." : `Showing ${filteredCourses.length} results`}
+                </p>
                 <div className="flex items-center space-x-2">
                   <SlidersHorizontal className="h-4 w-4 text-slate-400" />
-                  <Select defaultValue="featured">
+                  <Select value={sortBy} onValueChange={setSortBy}>
                     <SelectTrigger className="w-[180px] h-9 text-sm">
                       <SelectValue placeholder="Sort by" />
                     </SelectTrigger>
@@ -267,103 +382,147 @@ export default function LearnCertify() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {products.map((product) => (
-                  <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                    <div className="relative h-48">
-                      <img
-                        src={product.image || "/placeholder.svg"}
-                        alt={product.name}
-                        fill
-                        className="object-cover"
-                      />
-                      {product.badge && <Badge className="absolute top-2 right-2 bg-primary">{product.badge}</Badge>}
-                    </div>
-                    <CardHeader>
-                      <div className="flex items-center justify-between">
-                        <Badge variant="outline">{product.category}</Badge>
-                        <div className="flex items-center">
-                          {Array.from({ length: Math.floor(product.rating) }).map((_, i) => (
-                            <Star key={i} className="h-4 w-4 text-yellow-400 fill-yellow-400" />
-                          ))}
-                          {product.rating % 1 > 0 && <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />}
-                          {Array.from({ length: 5 - Math.ceil(product.rating) }).map((_, i) => (
-                            <Star key={i} className="h-4 w-4 text-slate-300" />
-                          ))}
-                        </div>
-                      </div>
-                      <CardTitle className="mt-2 line-clamp-1">{product.name}</CardTitle>
-                      <CardDescription className="line-clamp-2">{product.description}</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex items-center justify-between">
-                        <p className="font-bold text-lg">${product.price.toFixed(2)}</p>
-                        <p className="text-sm text-slate-500 line-through">${product.originalPrice.toFixed(2)}</p>
-                      </div>
-                    </CardContent>
-                    <CardFooter>
-                      <Button className="w-full">Add to Cart</Button>
-                    </CardFooter>
-                  </Card>
-                ))}
-              </div>
+              {/* Loading State */}
+              {loading && (
+                <div className="text-center py-12">
+                  <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto"></div>
+                  <p className="mt-4 text-slate-600">Loading courses...</p>
+                </div>
+              )}
 
-              {/* Pagination */}
-              <div className="flex items-center justify-center mt-12">
-                <div className="flex items-center space-x-2">
-                  <Button variant="outline" size="icon" disabled>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="h-4 w-4"
-                    >
-                      <path d="m15 18-6-6 6-6" />
-                    </svg>
-                  </Button>
-                  <Button variant="outline" size="sm" className="bg-primary text-white hover:bg-primary/90">
-                    1
-                  </Button>
-                  <Button variant="outline" size="sm">
-                    2
-                  </Button>
-                  <Button variant="outline" size="sm">
-                    3
-                  </Button>
-                  <Button variant="outline" size="sm">
-                    4
-                  </Button>
-                  <Button variant="outline" size="sm">
-                    5
-                  </Button>
-                  <Button variant="outline" size="icon">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="h-4 w-4"
-                    >
-                      <path d="m9 18 6-6-6-6" />
-                    </svg>
+              {/* Error State */}
+              {error && (
+                <div className="text-center py-12">
+                  <p className="text-red-500">{error}</p>
+                  <Button className="mt-4" onClick={() => window.location.reload()}>
+                    Try Again
                   </Button>
                 </div>
-              </div>
+              )}
+
+              {/* No Results State */}
+              {!loading && !error && filteredCourses.length === 0 && (
+                <div className="text-center py-12">
+                  <p className="text-slate-600">No courses found matching your filters.</p>
+                  <Button className="mt-4" onClick={resetFilters}>
+                    Reset Filters
+                  </Button>
+                </div>
+              )}
+
+              {/* Courses Grid */}
+              {!loading && !error && filteredCourses.length > 0 && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredCourses.map((course) => (
+                    <Card key={course._id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                      <div className="relative h-48">
+                        <img
+                          src={course.image || "/placeholder.svg?height=400&width=600"}
+                          alt={course.title}
+                          className="object-cover w-full h-full"
+                        />
+                        {course.isAffiliate && (
+                          <Badge className="absolute top-2 right-2 bg-yellow-400 text-black">Affiliate</Badge>
+                        )}
+                      </div>
+                      <CardHeader>
+                        <div className="flex items-center justify-between">
+                          <Badge variant="outline">{course.category}</Badge>
+                          <div className="flex items-center">
+                            {Array.from({ length: Math.floor(parseFloat(course.rating) || 0) }).map((_, i) => (
+                              <Star key={i} className="h-4 w-4 text-yellow-400 fill-yellow-400" />
+                            ))}
+                            {parseFloat(course.rating) % 1 > 0 && <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />}
+                            {Array.from({ length: 5 - Math.ceil(parseFloat(course.rating) || 0) }).map((_, i) => (
+                              <Star key={i} className="h-4 w-4 text-slate-300" />
+                            ))}
+                          </div>
+                        </div>
+                        <CardTitle className="mt-2 line-clamp-1">{course.title}</CardTitle>
+                        <CardDescription className="line-clamp-2">{course.description}</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex items-center justify-between">
+                          <p className="font-bold text-lg">
+                            {parseFloat(course.price) ? `${parseFloat(course.price).toFixed(2)}` : "Free"}
+                          </p>
+                        </div>
+                      </CardContent>
+                      <CardFooter>
+                        {course.isAffiliate ? (
+                          <Button 
+                            className="w-full" 
+                            onClick={() => window.open(course.affiliatelink, "_blank")}
+                          >
+                            View Course
+                          </Button>
+                        ) : (
+                          <Button className="w-full">Add to Cart</Button>
+                        )}
+                      </CardFooter>
+                    </Card>
+                  ))}
+                </div>
+              )}
+
+              {/* Pagination - This would need to be implemented with your API */}
+              {!loading && !error && filteredCourses.length > 0 && (
+                <div className="flex items-center justify-center mt-12">
+                  <div className="flex items-center space-x-2">
+                    <Button variant="outline" size="icon" disabled>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="h-4 w-4"
+                      >
+                        <path d="m15 18-6-6 6-6" />
+                      </svg>
+                    </Button>
+                    <Button variant="outline" size="sm" className="bg-primary text-white hover:bg-primary/90">
+                      1
+                    </Button>
+                    <Button variant="outline" size="sm">
+                      2
+                    </Button>
+                    <Button variant="outline" size="sm">
+                      3
+                    </Button>
+                    <Button variant="outline" size="sm">
+                      4
+                    </Button>
+                    <Button variant="outline" size="sm">
+                      5
+                    </Button>
+                    <Button variant="outline" size="icon">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="h-4 w-4"
+                      >
+                        <path d="m9 18 6-6-6-6" />
+                      </svg>
+                    </Button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
       </main>
-      </div>
-  )
+    </div>
+  );
 }
