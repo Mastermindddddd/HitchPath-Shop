@@ -75,27 +75,6 @@ const Hero = () => {
               </Card>
 
               {/* Category 2 */}
-              {/*<Card className="hover:shadow-lg transition-shadow border-t-4 border-t-purple-500">
-                <CardHeader className="text-center">
-                  <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Briefcase className="h-8 w-8 text-purple-600" />
-                  </div>
-                  <CardTitle>Career Toolkit</CardTitle>
-                  <CardDescription>Resumes, interview templates, and career guides</CardDescription>
-                </CardHeader>
-                <CardContent className="text-center">
-                  <p className="text-sm text-slate-600">
-                    AI-selected tools to help you stand out in competitive job markets.
-                  </p>
-                </CardContent>
-                <CardFooter className="flex justify-center">
-                  <Button variant="ghost" className="text-purple-600 hover:text-purple-700 hover:bg-purple-50">
-                    Explore Tools <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </CardFooter>
-              </Card>*/}
-
-              {/* Category 3 */}
               <Card className="hover:shadow-lg transition-shadow border-t-4 border-t-blue-500">
                 <CardHeader className="text-center">
                   <div className="w-16 h-16 bg-cyan-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -116,26 +95,6 @@ const Hero = () => {
                 </CardFooter>
               </Card>
 
-              {/* Category 4 */}
-              {/*<Card className="hover:shadow-lg transition-shadow border-t-4 border-t-purple-500">
-                <CardHeader className="text-center">
-                  <div className="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Heart className="h-8 w-8 text-teal-600" />
-                  </div>
-                  <CardTitle>Mindset & Wellness</CardTitle>
-                  <CardDescription>Journals, meditation apps, and wellness products</CardDescription>
-                </CardHeader>
-                <CardContent className="text-center">
-                  <p className="text-sm text-slate-600">
-                    AI-curated resources designed to support your mental well-being and work-life balance.
-                  </p>
-                </CardContent>
-                <CardFooter className="flex justify-center">
-                  <Button variant="ghost" className="text-purple-600 hover:text-purple-700 hover:bg-purple-50">
-                    Discover Wellness <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </CardFooter>
-              </Card>*/}
             </div>
             </div>
           </div>

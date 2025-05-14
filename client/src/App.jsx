@@ -10,6 +10,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import LearnCertify from "./pages/learnCertify";
 import ProductPage from "./pages/product";
 import AdminCourseManager from "./pages/AdminCourseManager";
+import AdminWorkEssentialsManager from "./pages/AdminWorkEssentialsManager";
 
 const App = () => {  
   useEffect(() => {
@@ -29,6 +30,7 @@ const App = () => {
             <Route path="/learn-and-certify" element={<LearnCertify />} />
             <Route path="/product" element={<ProductPage />} />
             <Route path="/Course-Admin" element={<AdminCourseManager />} />
+            <Route path="/Work-Essentials-Admin" element={<AdminWorkEssentialsManager />} />
           </Route>
         </Routes>
       <ButtonGradient />

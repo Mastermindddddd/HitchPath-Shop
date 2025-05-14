@@ -444,7 +444,7 @@ export default function LearnCertify() {
                       <CardContent>
                         <div className="flex items-center justify-between">
                           <p className="font-bold text-lg">
-                            {parseFloat(course.price) ? `${parseFloat(course.price).toFixed(2)}` : "Free"}
+                            R{parseFloat(course.price) ? `${parseFloat(course.price).toFixed(2)}` : "Free"}
                           </p>
                         </div>
                       </CardContent>
