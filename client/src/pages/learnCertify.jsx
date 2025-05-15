@@ -171,14 +171,8 @@ export default function LearnCertify() {
             <Link to="/learn-and-certify" className="text-sm font-medium hover:text-primary">
               Learn & Certify
             </Link>
-            <Link to="/career-toolkit" className="text-sm font-medium hover:text-primary">
-              Career Toolkit
-            </Link>
             <Link to="/work-essentials" className="text-sm font-medium hover:text-primary">
               Work Essentials
-            </Link>
-            <Link to="/mindset-wellness" className="text-sm font-medium hover:text-primary">
-              Mindset & Wellness
             </Link>
           </nav>
           <div className="flex items-center space-x-4">

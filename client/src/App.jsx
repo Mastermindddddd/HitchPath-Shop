@@ -11,6 +11,7 @@ import LearnCertify from "./pages/learnCertify";
 import ProductPage from "./pages/product";
 import AdminCourseManager from "./pages/AdminCourseManager";
 import AdminWorkEssentialsManager from "./pages/AdminWorkEssentialsManager";
+import WorkEssentials from "./pages/WorkEssentials";
 
 const App = () => {  
   useEffect(() => {
@@ -28,6 +29,7 @@ const App = () => {
             <Route path="/login" element={<Login />} />
             {/*<Route path="/dashboard" element={<DashboardPage />} />*/}
             <Route path="/learn-and-certify" element={<LearnCertify />} />
+            <Route path="/work-essentials" element={<WorkEssentials />} />
             <Route path="/product" element={<ProductPage />} />
             <Route path="/Course-Admin" element={<AdminCourseManager />} />
             <Route path="/Work-Essentials-Admin" element={<AdminWorkEssentialsManager />} />
