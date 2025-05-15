@@ -17,7 +17,7 @@ export default function LearnCertify() {
   const [error, setError] = useState(null);
   const [sortBy, setSortBy] = useState("featured");
   const [priceRange, setPriceRange] = useState([0, 1000]);
-  const [selectedRatings, setSelectedRatings] = useState([]);
+  const [selectedRatings, setSelectedRatings] = useState([]);8
   const [selectedTypes, setSelectedTypes] = useState([]);
   const [selectedLevels, setSelectedLevels] = useState([]);
   
