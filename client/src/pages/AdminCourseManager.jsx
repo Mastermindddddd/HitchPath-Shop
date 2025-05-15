@@ -141,7 +141,7 @@ export default function AdminCourseManager() {
             </div>
             <CardHeader>
               <div className="flex items-center justify-between">
-                <Badge variant="outline" className="border-blue-500 text-blue-700">
+                <Badge variant="outline" className="border-blue-500 6text-blue-700">
                   {c.category || 'Learn & Certify'}
                 </Badge>
                 <div className="flex items-center">
